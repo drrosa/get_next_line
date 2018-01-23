@@ -34,7 +34,7 @@ char	*ft_file_to_str(const int fd)
 	int		fd;
 	char	*str;
 	int		ret;
-	int 	n;
+	size_t 	n;
 
 	n = ft_file_len(fd);
 	str = (char*)malloc(sizeof(char) * (n));
