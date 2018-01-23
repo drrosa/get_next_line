@@ -15,7 +15,6 @@
 int		ft_file_len(const int fd)
 {
 	size_t	n;
-	int		fd;
 	char	buf[BUFF_SIZE];
 	int		is_eof;
 
@@ -31,10 +30,9 @@ int		ft_file_len(const int fd)
 
 char	*ft_file_to_str(const int fd)
 {
-	int		fd;
 	char	*str;
 	int		ret;
-	size_t 	n;
+	size_t	n;
 
 	n = ft_file_len(fd);
 	str = (char*)malloc(sizeof(char) * (n));
@@ -48,12 +46,18 @@ char	*ft_file_to_str(const int fd)
 	return (str);
 }
 
-int get_next_line(const int fd, char **line)
+int		get_next_line(const int fd, char **line)
 {
 	static char *fd_list[MAX_FD];
+	int			i;
 
-	fd_list[fd] = ft_file_to_str(fd);
-
-
-	return(0);
+	if (!fd_list[fd])
+		fd_list[fd] = ft_file_to_str(fd);
+	i = 0;
+	while (*fd_list[i] != '\n')
+		i++;
+	*fd_list[i] = '\0';
+	line = fd_list;
+	fd_list[fd] = fd_list[i + 1];
+	return (0);
 }
