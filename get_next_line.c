@@ -47,8 +47,11 @@ int		get_next_line(const int fd, char **line)
 	if ((str = ft_strchr(fd_list[fd], '\n')))
 	{
 		*str = '\0';
+		*line = fd_list[fd];
 		fd_list[fd] = ++str;
+		return (1);
 	}
 	*line = fd_list[fd];
-	return (line != 0);
+	fd_list[fd] = "";
+	return (**line != '\0');
 }
