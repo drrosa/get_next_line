@@ -24,26 +24,29 @@ int		ft_file_len(const int fd)
 		return (0);
 	while ((is_eof = read(fd, buf, BUFF_SIZE)))
 		n = is_eof + n;
-	close(fd);
+	// close(fd);
 	return (n + 1);
 }
-
-char	*ft_file_to_str(const int fd)
+#include <stdio.h>
+int		ft_file_to_str(const int fd, char **str)
 {
-	char	*str;
+	char	buffer[BUFF_SIZE + 1];
 	int		ret;
-	size_t	n;
+	char	*tmp;
 
-	n = ft_file_len(fd);
-	str = (char*)malloc(sizeof(char) * (n));
-	if (!str || fd == -1)
-		return (0);
-	ret = read(fd, str, n);
-	if (ret == -1 || (!ret && n == 0))
-		return (0);
-	str[n] = '\0';
-	close(fd);
-	return (str);
+	while ((ret = read(fd, buffer, BUFF_SIZE)) > 0)
+	{
+		buffer[ret] = '\0';
+		if (!*str)
+			*str = ft_strdup(buffer);
+		else
+		{
+			tmp = *str;
+			*str = ft_strjoin(*str, buffer);
+			free(tmp);
+		}
+	}
+	return (ret);
 }
 
 int		get_next_line(const int fd, char **line)
@@ -51,13 +54,26 @@ int		get_next_line(const int fd, char **line)
 	static char *fd_list[MAX_FD];
 	int			i;
 
-	if (!fd_list[fd])
-		fd_list[fd] = ft_file_to_str(fd);
+	if (fd < 0 || fd > MAX_FD || !line) 
+		return (-1);
+	if (ft_file_to_str(fd, &fd_list[fd]) < 0)
+		return (-1);
+	// printf("fd: %d str: %s\n", fd, fd_list[fd]);
 	i = 0;
-	while (*fd_list[i] != '\n')
+	while (fd_list[fd][i] != '\n')
 		i++;
-	*fd_list[i] = '\0';
-	line = fd_list;
+	fd_list[fd][i] = '\0';
+	*line = fd_list[fd];
 	fd_list[fd] = fd_list[i + 1];
-	return (0);
+	return (line != 0);
 }
+
+// int main(void)
+// {
+// 	int fd = open("test", O_RDONLY);
+// 	char **line;
+
+// 	get_next_line(fd, line);
+// 	printf("%s\n", *line);
+// 	close(fd);
+// }
