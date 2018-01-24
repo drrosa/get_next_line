@@ -37,16 +37,18 @@ int		get_next_line(const int fd, char **line)
 {
 	static char *fd_list[MAX_FD];
 	int			i;
+	char		*str;
 
 	if (fd < 0 || fd > MAX_FD || !line)
 		return (-1);
 	if (ft_file_to_str(fd, &fd_list[fd]) < 0)
 		return (-1);
 	i = 0;
-	while (fd_list[fd][i] != '\n')
-		i++;
-	fd_list[fd][i] = '\0';
+	if ((str = ft_strchr(fd_list[fd], '\n')))
+	{
+		*str = '\0';
+		fd_list[fd] = ++str;
+	}
 	*line = fd_list[fd];
-	fd_list[fd] = fd_list[i + 1];
 	return (line != 0);
 }
