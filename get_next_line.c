@@ -6,7 +6,7 @@
 /*   By: drosa-ta <drosa-ta@student.42.us.or>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/22 23:03:30 by drosa-ta          #+#    #+#             */
-/*   Updated: 2018/01/22 23:03:39 by drosa-ta         ###   ########.fr       */
+/*   Updated: 2018/01/26 16:46:08 by drosa-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,26 @@ int		ft_file_to_str(const int fd, char **str)
 int		get_next_line(const int fd, char **line)
 {
 	static char *fd_list[MAX_FD];
-	int			i;
+	int			ret;
 	char		*str;
 
 	if (fd < 0 || fd > MAX_FD || !line)
 		return (-1);
-	if (ft_file_to_str(fd, &fd_list[fd]) < 0)
+	if ((ret = ft_file_to_str(fd, &fd_list[fd]) < 0))
 		return (-1);
-	i = 0;
+	if (ret == 0)
+	{
+		*line = NULL;
+		return (0);
+	}
 	if ((str = ft_strchr(fd_list[fd], '\n')))
 	{
 		*str = '\0';
 		*line = fd_list[fd];
-		fd_list[fd] = ++str;
+		fd_list[fd] = ft_strdup(++str);
 		return (1);
 	}
 	*line = fd_list[fd];
-	fd_list[fd] = "";
+	fd_list[fd] = NULL;
 	return (**line != '\0');
 }
